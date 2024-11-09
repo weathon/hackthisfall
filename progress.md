@@ -14,3 +14,4 @@
 | Show on Screen       | x          |
 | Summary              | 0%          | 
 | Current Topics      | 100%          |
+| User Interface      | 10%          |
