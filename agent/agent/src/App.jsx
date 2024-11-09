@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import { WavRecorder } from '../openai-realtime-console/src/lib/wavtools/index.js';
 import { GoogleGenerativeAI, DynamicRetrievalMode } from "@google/generative-ai";
-import { GoogleAIFileManager, FileState } from "@google/generative-ai/server"
-import  { search }  from './search'
+import { search } from './search'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+
 import './App.css'
 
 async function doc_loop_up(query) {
@@ -49,7 +51,7 @@ function App() {
   const [wavRecorder, setWavRecorder] = useState(new WavRecorder({ sampleRate: 24000 }));
   const [screenshotBase64, setScreenshotBase64] = useState(null);
   const genAI = useRef(null);
-  const model = useRef(null); 
+  const model = useRef(null);
   const chat = useRef(null);
 
   useEffect(() => {
@@ -133,26 +135,27 @@ function App() {
       speechSynthesis.speak(utterance);
       // # use chinese
       // utterance.lang = "zh-tw"
-      if(result.response.functionCalls()){
+      if (result.response.functionCalls()) {
         console.log(result.response.functionCalls()[0])
-        if(result.response.functionCalls()[0].name == "web_search")
-        {
+        if (result.response.functionCalls()[0].name == "web_search") {
           var query = result.response.functionCalls()[0].args.query
           var res = await web_search(query)
-          
+
           console.log(res)
-          var result2 = await chat.current.sendMessage([{functionResponse: {
-            name: 'web_search',
-            response: {
-              "text": res
+          var result2 = await chat.current.sendMessage([{
+            functionResponse: {
+              name: 'web_search',
+              response: {
+                "text": res
+              }
             }
-          }}])
+          }])
           let utterance = new SpeechSynthesisUtterance(result2.response.text());
           utterance.rate = 1;
           speechSynthesis.speak(utterance);
         }
       }
-    
+
 
 
     }
@@ -185,17 +188,22 @@ function App() {
 
 
 
-
-
-
-
   return (
     <>
-      <video ref={videoElem} autoPlay hidden></video>
-      <canvas id="canvas" width="640" height="480"></canvas>
-      <button onClick={startCapture}>Start</button>
-      <button onClick={() => { startRecord(wavRecorder) }}>Record</button>
-      <button onClick={async () => { stopRecord() }}>Stop</button>
+      <video ref={videoElem} autoPlay poster="image.png"></video>
+      <Container>
+        <Row>
+          <Col xs={8}>
+            <canvas id="canvas" width="50%" height="480" hidden></canvas>
+          </Col>
+          <Col>
+            <h1>Realtime Keypoints</h1>
+          </Col>
+        </Row>
+      </Container>
+      <Button style={{ margin: "3px" }} onClick={startCapture}>Start</Button>
+      <Button style={{ margin: "3px" }} onClick={() => { startRecord(wavRecorder) }}>Record</Button>
+      <Button style={{ margin: "3px" }} onClick={async () => { stopRecord() }}>Stop</Button>
 
     </>
   )
