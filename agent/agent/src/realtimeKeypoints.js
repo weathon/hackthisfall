@@ -17,7 +17,7 @@ async function realtimeKeypoints(setKeypoints) {
     await wavRecorder.begin();
     await wavRecorder.clear();
     await wavRecorder.record();
-    setInterval(async () => {
+    return setInterval(async () => {
         await wavRecorder.pause();
         const audio = await wavRecorder.end();
 

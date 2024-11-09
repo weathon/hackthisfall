@@ -1,7 +1,7 @@
 async function summary(chat)
 {
     const res = await chat.current.sendMessage([
-        "The meeting has ended. Please summary the meeting"])
+        "Please summary the conversation"])
     console.log(res)
     console.log(res.response.candidates[0].content.parts[0].text)
 
