@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import { WavRecorder } from '../openai-realtime-console/src/lib/wavtools/index.js';
 import { GoogleGenerativeAI, DynamicRetrievalMode } from "@google/generative-ai";
 import { GoogleAIFileManager, FileState } from "@google/generative-ai/server"
+import  { search }  from './search'
 import './App.css'
 
 async function doc_loop_up(query) {
@@ -11,7 +12,7 @@ async function doc_loop_up(query) {
 }
 
 async function web_search(query) {
-  return "LMAO"
+  return await search(query)
 }
 
 const docSearchDeclaration = {
@@ -48,7 +49,7 @@ function App() {
   const [wavRecorder, setWavRecorder] = useState(new WavRecorder({ sampleRate: 24000 }));
   const [screenshotBase64, setScreenshotBase64] = useState(null);
   const genAI = useRef(null);
-  const model = useRef(null);
+  const model = useRef(null); 
   const chat = useRef(null);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ function App() {
     );
     chat.current = model.current.startChat();
     // console.log(chat.current.sendMessage)
-    (async () => { await chat.current.sendMessage(["You are a helpful assistant not a translator. You are a helpful assistant, answer the user do not repeat that. You are connected with a audio transcription and also a vision model. Search doc_loop_up when you need to search within company database. And also web search."]) })()
+    (async () => { await chat.current.sendMessage(["You are a helpful assistant not a translator. You are a helpful assistant, answer the user do not repeat that. You are connected with a audio transcription and also a vision model. Search doc_loop_up when you need to search within company database. And also web search. Make sure you use the tool when told to. "]) })()
   }, []);
 
   const startRecord = async (wavRecorder) => {
@@ -129,13 +130,30 @@ function App() {
       console.log(txt);
       let utterance = new SpeechSynthesisUtterance(txt);
       utterance.rate = 1;
+      speechSynthesis.speak(utterance);
       // # use chinese
-      utterance.lang = "zh-tw"
+      // utterance.lang = "zh-tw"
       if(result.response.functionCalls()){
         console.log(result.response.functionCalls()[0])
+        if(result.response.functionCalls()[0].name == "web_search")
+        {
+          var query = result.response.functionCalls()[0].args.query
+          var res = await web_search(query)
+          
+          console.log(res)
+          var result2 = await chat.current.sendMessage([{functionResponse: {
+            name: 'web_search',
+            response: {
+              "text": res
+            }
+          }}])
+          let utterance = new SpeechSynthesisUtterance(result2.response.text());
+          utterance.rate = 1;
+          speechSynthesis.speak(utterance);
+        }
       }
     
-      speechSynthesis.speak(utterance);
+
 
     }
   }
