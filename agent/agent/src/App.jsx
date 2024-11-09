@@ -67,7 +67,7 @@ function App() {
     );
     chat.current = model.current.startChat();
     // console.log(chat.current.sendMessage)
-    (async () => { await chat.current.sendMessage(["You are a helpful assistant not a translator. You are a helpful assistant, answer the user do not repeat that. You are connected with a audio transcription and also a vision model. Search doc_loop_up when you need to search within company database. And also web search. Make sure you use the tool when told to. "]) })()
+    (async () => { await chat.current.sendMessage(["Your name is Sandy and you are a helpful assistant not a translator. You are a helpful assistant, answer the user do not repeat that. You are connected with a audio transcription and also a vision model so you can hear and see the screen. Search doc_loop_up when you need to search within company database. And also web search. Make sure you use the tool when told to. "]) })()
   }, []);
 
   const startRecord = async (wavRecorder) => {
@@ -132,12 +132,12 @@ function App() {
       console.log(result);
       const txt = result.response.text().replaceAll("*", "").replaceAll(":", "").replaceAll("?", "").replaceAll("!", "").replaceAll("`", "").replaceAll("@", "").replaceAll("_", "")
       console.log(txt);
-      let utterance = new SpeechSynthesisUtterance(txt);
-      utterance.rate = 1;
-      speechSynthesis.speak(utterance);
       // # use chinese
       // utterance.lang = "zh-tw"
       if (result.response.functionCalls()) {
+        let utterance = new SpeechSynthesisUtterance(txt);
+        utterance.rate = 1;
+        speechSynthesis.speak(utterance);
         console.log(result.response.functionCalls()[0])
         if (result.response.functionCalls()[0].name == "web_search") {
           var query = result.response.functionCalls()[0].args.query
@@ -155,9 +155,21 @@ function App() {
           let utterance = new SpeechSynthesisUtterance(result2.response.text());
           utterance.rate = 1;
           speechSynthesis.speak(utterance);
+          utterance.onend = () => {
+            console.log("start again")
+            startRecord(wavRecorder)
+          }
         }
       }
-
+      else {
+        let utterance = new SpeechSynthesisUtterance(txt);
+        utterance.rate = 1;
+        speechSynthesis.speak(utterance);
+        utterance.onend = () => {
+          console.log("start again")
+          startRecord(wavRecorder)
+        }
+      }
 
 
     }
@@ -220,7 +232,7 @@ function App() {
       <Button style={{ margin: "3px" }} onClick={startCapture}>Start</Button>
       {/* <Button style={{ margin: "3px" }} onClick={() => { }}>Record</Button> */}
       <Button style={{ margin: "3px" }} onClick={async () => { stopRecord() }}>Stop</Button>
-      <Button onClick={()=>{summary(chat)}}>Generate Summary</Button>
+      <Button onClick={() => { summary(chat) }}>Generate Summary</Button>
       <Button onClick={() => { realtimeKeypoints(setKeypoints) }}>Start Realtime Keypoints</Button>
 
     </>
