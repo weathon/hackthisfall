@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import { realtimeKeypoints } from './realtimeKeypoints'
 
 import './App.css'
 
@@ -50,6 +51,7 @@ function App() {
   const [audioBase64, setAudioBase64] = useState(null);
   const [wavRecorder, setWavRecorder] = useState(new WavRecorder({ sampleRate: 24000 }));
   const [screenshotBase64, setScreenshotBase64] = useState(null);
+  const [keypoints, setKeypoints] = useState(null);
   const genAI = useRef(null);
   const model = useRef(null);
   const chat = useRef(null);
@@ -183,6 +185,7 @@ function App() {
     } catch (err) {
       console.error(`Error: ${err}`);
     }
+    startRecord(wavRecorder)
     return captureStream;
   }
 
@@ -190,7 +193,7 @@ function App() {
 
   return (
     <>
-      <video ref={videoElem} autoPlay poster="image.png"></video>
+      <video ref={videoElem} autoPlay poster="image.png" style={{ margin: "20px" }}></video>
       <Container>
         <Row>
           <Col xs={8}>
@@ -198,12 +201,26 @@ function App() {
           </Col>
           <Col>
             <h1>Realtime Keypoints</h1>
+            {
+              <ul>
+                {
+                  keypoints && keypoints.map((keypoint, i) => {
+                    return (
+                      <li key={i}>
+                        {keypoint}
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+            }
           </Col>
         </Row>
       </Container>
       <Button style={{ margin: "3px" }} onClick={startCapture}>Start</Button>
-      <Button style={{ margin: "3px" }} onClick={() => { startRecord(wavRecorder) }}>Record</Button>
+      {/* <Button style={{ margin: "3px" }} onClick={() => { }}>Record</Button> */}
       <Button style={{ margin: "3px" }} onClick={async () => { stopRecord() }}>Stop</Button>
+      <Button onClick={() => { realtimeKeypoints(setKeypoints) }}>Start Realtime Keypoints</Button>
 
     </>
   )
