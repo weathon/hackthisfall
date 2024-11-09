@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { realtimeKeypoints } from './realtimeKeypoints'
-
+import { summary } from './summary'
 import './App.css'
 
 async function doc_loop_up(query) {
@@ -220,6 +220,7 @@ function App() {
       <Button style={{ margin: "3px" }} onClick={startCapture}>Start</Button>
       {/* <Button style={{ margin: "3px" }} onClick={() => { }}>Record</Button> */}
       <Button style={{ margin: "3px" }} onClick={async () => { stopRecord() }}>Stop</Button>
+      <Button onClick={()=>{summary(chat)}}>Generate Summary</Button>
       <Button onClick={() => { realtimeKeypoints(setKeypoints) }}>Start Realtime Keypoints</Button>
 
     </>

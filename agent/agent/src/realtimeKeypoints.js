@@ -12,7 +12,7 @@ async function realtimeKeypoints(setKeypoints) {
     );
     const chat = model.startChat()
 
-    prompt = 'Generate summary of keypoints points, each line with one point. Only say the key points without things like "here is a summary", response in a json list. if there is no key points, use a empty list. Example: ["point 1", "point 2", "point 3"]. only return the points that are available. You will get audio every couple of seconds, give all the keypoints you can find in the audio, even in the past clips. You can merge points in the past clip if they are related.';  
+    prompt = 'Generate summary of keypoints points, each line with one point. Only say the key points without things like "here is a summary", response in a json list. if there is no key points, use a empty list. Example: ["point 1", "point 2", "point 3"]. only return the points that are available. You will get audio every couple of seconds, give all the keypoints you can find in the audio, EVEN in the past clips. You can merge points in the past clip if they are related.';  
     const wavRecorder = new WavRecorder({ sampleRate: 24000 });
     await wavRecorder.begin();
     await wavRecorder.clear();
