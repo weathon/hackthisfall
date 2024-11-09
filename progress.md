@@ -13,4 +13,4 @@
 | Watch APP            | 0%          |
 | Show on Screen       | 0%          |
 | Summary              | 0%          | 
-| Current Topics      | 0%          |
+| Current Topics      | 100%          |
