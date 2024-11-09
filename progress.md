@@ -12,6 +12,6 @@
 | Browser Search       | 100%        |
 | Watch APP            | x          |
 | Show on Screen       | x          |
-| Summary              | 0%          | 
+| Summary              | 50%          | 
 | Current Topics      | 100%          |
 | User Interface      | 10%          |
