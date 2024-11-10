@@ -8,10 +8,10 @@
 | AI Image             | 100%        |
 | Multi Turn           | 100%        |
 | Hand Recognition     | 70%         |
-| Doc Search           | 40%         |
+| Doc Search           | x         |
 | Browser Search       | 100%        |
 | Watch APP            | x          |
 | Show on Screen       | x          |
-| Summary              | 50%          | 
+| Summary              | 100%          | 
 | Current Topics      | 100%          |
-| User Interface      | 50%          |
+| User Interface      | 100%          |
