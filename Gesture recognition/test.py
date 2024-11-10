@@ -4,26 +4,21 @@ import time
 import numpy as np
 import os
 
-# 初始化 Roboflow 模型
 rf = Roboflow(api_key="qOAgjoE2fn9cot859u7q")
 project = rf.workspace().project("hand-pbch0")
 model = project.version(1).model
 
-# 打开摄像头
 cap = cv2.VideoCapture(0)
-
-# 设置摄像头分辨率
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
 # 用于记录食指轨迹的列表
-finger_positions = []
 current_finger_positions = []
 
 # 上次处理的时间（控制帧率）
 last_time = time.time()
 
-frame_rate = 15 # 帧率
+frame_rate = 15  # 帧率
 
 temp_image_path = "temp_frame.jpg"
 
@@ -62,7 +57,6 @@ while True:
 
             # 遍历每个预测结果
             for prediction in predictions:
-                # 防止索引错误，先检查 'predictions' 列表是否为空
                 prediction_points = prediction.get('predictions', [])
                 if prediction_points:
                     keypoints = prediction_points[0].get('keypoints', [])
@@ -82,31 +76,35 @@ while True:
 
                             # 如果食指被检测到，记录其位置
                             if class_name == 'new-point-0':
-                                if is_drawing:
+                                if is_drawing:  # 只有在绘制状态下才记录轨迹
                                     current_finger_positions.append((x, y))
 
-        if cv2.waitKey(1) & 0xFF == ord(' '): 
+        # 处理空格键的逻辑，切换绘制状态
+        if cv2.waitKey(1) & 0xFF == ord(' '):
             if not space_pressed:
                 space_pressed = True
-                current_finger_positions = []
-                is_drawing = True
+                is_drawing = True  # 进入绘制状态
         else:
             space_pressed = False
-            is_drawing = False
+            is_drawing = False  # 离开绘制状态
 
-        
+        # 绘制轨迹
         if len(current_finger_positions) > 1:
             for i in range(1, len(current_finger_positions)):
                 cv2.line(whiteboard, current_finger_positions[i-1], current_finger_positions[i], (0, 0, 0), 3)
 
+        # 将当前帧和白板合成显示
         combined_frame = cv2.addWeighted(current_frame, 0.7, whiteboard, 0.3, 0)
         cv2.imshow("Real-time Hand Tracking", combined_frame)
 
+        # 更新帧率时间
         last_time = current_time
 
+    # 按下 'q' 键退出程序
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+# 清理临时图像文件
 if os.path.exists(temp_image_path):
     os.remove(temp_image_path)
 
